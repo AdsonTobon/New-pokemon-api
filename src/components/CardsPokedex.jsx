@@ -2,44 +2,66 @@ import React, { useState, useEffect } from "react";
 import TypeColors from "../services/TypeColors";
 import "../css/Cards.css";
 import ImgPokemon from '../img/pokemon.png';
+import 'bootstrap/dist/css/bootstrap.css';
+import {Button, Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap';
+
+
 
 const CardsPokedex = () => {
   const [Pokemones, setPokemones] = useState([]);
   const [allPokemons, setAllPokemons] = useState([]);
   const [load, setLoad] = useState("true");
   const [loading, setLoading] = useState(false);
+  const [Abierto, setAbierto] = useState(false)
+  
   const Url = "https://pokeapi.co/api/v2/pokemon?limit=25";
 
   const arr = [];
 
   useEffect(() => {
-    fetch(Url)
-      .then((response) => response.json())
-      .then((data) =>
-        setPokemones(
-          data.results.forEach((item) => {
-            fetch(item.url)
-              .then((response) => response.json())
-              .then((allpokemon) => arr.push(allpokemon));
-            setAllPokemons(arr);
-            setLoading(false);
-          })
-        )
-      );
+    function obtenerPrimeroPokemones(){
+      let pokens = obtenerPokemones()
+      setAllPokemons(pokens)
+      setLoading(false);
+    }
+    obtenerPrimeroPokemones()
   }, []);
 
-  const filtrarPeliculas= async (e)=>{
-    let pokemones =  await allPokemons
+  
+
+ const obtenerPokemones =() =>{
+  setLoading(true);
+  fetch(Url)
+  .then((response) => response.json())
+  .then((data) =>
+    setPokemones(
+      data.results.forEach((item) => {
+        fetch(item.url)
+          .then((response) => response.json())
+          .then((allpokemon) => arr.push(allpokemon));
+        setAllPokemons(arr);
+        
+      })
+    )
+  )
+
+ }
+
+
+  const filtrarPokemones= (e)=>{
+    let pokemones = obtenerPokemones()
     let filtro = document.querySelector('#filtro').value.toLowerCase();
-    let resultado = pokemones.filter(function(pelicula){
-      let tituloMin = pelicula.name.toLowerCase();
+    let resultado = pokemones.filter(function(poke){
+      let tituloMin = poke.name.toLowerCase();
       return tituloMin.indexOf(filtro) >=0 
     })
     setAllPokemons(resultado)
     setLoading(false)
   }
 
-  console.log(allPokemons);
+ const abrirModal=()=>{
+    setAbierto(!Abierto)
+  }
 
   setTimeout(() => {
     setLoad(false);
@@ -59,13 +81,16 @@ const CardsPokedex = () => {
               className="button-search"
               type="text"
               placeholder="search to pokemon"
-              onKeyUp={filtrarPeliculas}
+              // onKeyUp={filtrarPokemones}
             />
             {loading===true?<span>Loading....</span>:""}  
           </div>
+          
+         
         </header>
       </div>
 
+      <div className="container-principal-cards"> 
       <div className="container-cards">
         {load ? (
           <p>Loading...</p>
@@ -88,11 +113,32 @@ const CardsPokedex = () => {
                     </div>
                   ))}
                 </div>
+                <div>
+                    <Button color="success" onClick={abrirModal} >{datos.name}</Button>
+                </div>
+                <div>
+                    <Modal isOpen={Abierto}>
+                      <ModalHeader>
+                        Informacion Pokemon
+                      </ModalHeader>
+                      <ModalBody>
+                      <img src={datos.sprites.front_default} alt="pokemon"></img>
+                      <div>{datos.name}</div>
+                      </ModalBody>
+                      <ModalFooter>
+                          <Button color="danger" onClick={abrirModal}>Cerrar</Button>
+                      </ModalFooter>
+                    </Modal>
+          </div>
               </div>
             );
           })
         )}
       </div>
+      
+                
+      </div>
+      
     </div>
   );
 };
