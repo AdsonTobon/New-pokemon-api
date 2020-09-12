@@ -1,0 +1,38 @@
+.container-modal{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    
+}
+
+.container-info{
+    background-color: white;
+   
+    padding: 2%;
+    text-align: center;
+    border-radius: 10px;
+    -webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
+
+}
+
+.info{
+    background-color: rgb(207, 204, 204);
+    border-radius: 10px;
+    font-family: 'Kite One', sans-serif;
+}
+.button-back{
+    width: 210px;
+    margin-top: 15px;
+    padding: 1%;
+    border-radius: 10px;
+    border-style: none;
+    background-color: black;
+    color: yellow;
+    font-size: 20px;
+    font-weight: bold;
+
+}
