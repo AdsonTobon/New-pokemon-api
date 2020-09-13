@@ -9,23 +9,23 @@ const CardsPokedex = () => {
   const [Pokemones, setPokemones] = useState([]);
   const [allPokemons, setAllPokemons] = useState([]);
   const [load, setLoad] = useState("true");
-  const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState("");
+
+  const handleSearchChange = (e) => {
+    setFilter(e.target.value);
+  };
 
   const Url = "https://pokeapi.co/api/v2/pokemon?limit=25";
 
   const arr = [];
+  console.log(arr)
 
   useEffect(() => {
-    function obtenerPrimeroPokemones() {
-      let pokens = obtenerPokemones();
-      setAllPokemons(pokens);
-      setLoading(false);
-    }
-    obtenerPrimeroPokemones();
+    obtenerPokemones()
+    
   }, []);
 
   const obtenerPokemones = () => {
-    setLoading(true);
     fetch(Url)
       .then((response) => response.json())
       .then((data) =>
@@ -39,19 +39,6 @@ const CardsPokedex = () => {
           })
         )
       );
-  };
-
-  
-
-  const filtrarPokemones = (e) => {
-    let pokemones = obtenerPokemones();
-    let filtro = document.querySelector("#filtro").value.toLowerCase();
-    let resultado = pokemones.filter(function (poke) {
-      let tituloMin = poke.name.toLowerCase();
-      return tituloMin.indexOf(filtro) >= 0;
-    });
-    setAllPokemons(resultado);
-    setLoading(false);
   };
 
   setTimeout(() => {
@@ -72,9 +59,8 @@ const CardsPokedex = () => {
               className="button-search"
               type="text"
               placeholder="search to pokemon"
-              // onKeyUp={filtrarPokemones}
+              onChange={handleSearchChange}
             />
-            {loading === true ? <span>Loading....</span> : ""}
           </div>
         </header>
       </div>
@@ -84,32 +70,44 @@ const CardsPokedex = () => {
           {load ? (
             <p>Loading...</p>
           ) : (
-            allPokemons.map((datos, i) => {
-              return (
-                <div key={datos.id} id={datos.id} className="cards">
-                  <div>
-                    <img src={datos.sprites.front_default} alt="pokemon"></img>
-                  </div>
-                  <div>{datos.id}</div>
-                  <div>{datos.name.toUpperCase()}</div>
-                  <div>
-                    {datos.types.map((data, i) => (
-                      <div
-                        key={i}
-                        style={{ backgroundColor: TypeColors[data.type.name] }}
-                      >
-                        {data.type.name}
-                      </div>
-                    ))}
-                  </div>
+            allPokemons.map(
+              (datos, i) =>
+                datos.name.includes(filter) && (
+                  <div key={i} className="cards">
+                    <div>
+                      <img
+                        src={datos.sprites.front_default}
+                        alt="pokemon"
+                      ></img>
+                    </div>
+                    <div>{datos.id}</div>
+                    <div>{datos.name.toUpperCase()}</div>
 
-                  <Link to={`/${datos.id}`}><button className="button-info">Mas Información</button> </Link>
-                </div>
-              );
-            })
+                    <div>
+                      {datos.types.map((data, i) => (
+                        <div
+                          key={i}
+                          style={{
+                            backgroundColor: TypeColors[data.type.name],
+                          }}
+                        >
+                          {data.type.name}
+                        </div>
+                      ))}
+                    </div>
+
+                    <Link to={`/${datos.id}`}>
+                      <button className="button-info">Mas Información</button>{" "}
+                    </Link>
+                  </div>
+                )
+            )
           )}
         </div>
       </div>
+      <footer className="footer">
+            <b> <span className="create">Create by:</span></b>   2020 | Camilo Castañeda | Anderson Tobon 
+          </footer>
     </div>
   );
 };
